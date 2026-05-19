@@ -40,10 +40,10 @@ const DEFAULT_SITE_OG_IMAGE = resolveDefaultSiteCoverImage(SITE_URL)
 export const metadata: Metadata = {
   metadataBase: getSiteUrlObject(),
   title: {
-    default: '乔木博客',
-    template: '%s · 乔木博客',
+    default: '蓝白界',
+    template: '%s · 蓝白界',
   },
-  description: '记录思考，分享所学，留住当下。技术、生活、读书笔记的数字花园。',
+  description: '蓝白之间，看见世界的另一面。',
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -64,24 +64,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'zh_CN',
     url: SITE_URL,
-    siteName: '乔木博客',
-    title: '乔木博客',
-    description: '记录思考，分享所学，留住当下。技术、生活、读书笔记的数字花园。',
+    siteName: '蓝白界',
+    title: '蓝白界',
+    description: '蓝白之间，看见世界的另一面。',
     images: [
       {
         url: DEFAULT_SITE_OG_IMAGE,
         width: 1280,
         height: 720,
-        alt: '乔木博客',
+        alt: '蓝白界',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@vista8',
-    creator: '@vista8',
-    title: '乔木博客',
-    description: '记录思考，分享所学，留住当下。技术、生活、读书笔记的数字花园。',
+    site: '',
+    creator: '',
+    title: '蓝白界',
+    description: '蓝白之间，看见世界的另一面。',
     images: [DEFAULT_SITE_OG_IMAGE],
   },
 };
