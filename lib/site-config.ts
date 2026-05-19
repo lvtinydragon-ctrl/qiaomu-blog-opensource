@@ -1,5 +1,5 @@
 const DEV_SITE_URL = 'http://localhost:3000'
-const DEFAULT_PRODUCTION_SITE_URL = 'https://bluewhiterealm.ccwu.cc'
+const DEFAULT_PRODUCTION_SITE_URL = 'https://bluewhiterealm.us.ci'
 
 function parseSiteUrl(value: string): URL | null {
   try {
