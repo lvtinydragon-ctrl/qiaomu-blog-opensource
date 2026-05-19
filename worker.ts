@@ -26,4 +26,4 @@ export default customWorker
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- generated artifact may be absent during clean Next type-checks
-export { DOQueueHandler, DOShardedTagCache } from './.open-next/worker.js'
+export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from './.open-next/worker.js'

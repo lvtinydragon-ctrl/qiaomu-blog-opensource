@@ -1,0 +1,44 @@
+name = "bluew-blog"
+main = "worker.ts"
+compatibility_date = "2026-04-14"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[ai]
+binding = "WORKERS_AI"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "bluew-blog"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "qiaomu-blog-db"
+database_id = "c299df36-e22c-415a-9c36-b81981d993bb"
+
+# R2 skipped - no credit card on account, use external image URLs
+
+[vars]
+NEXT_PUBLIC_SITE_URL = "https://bluew-blog.lvtinydragon.workers.dev"
+AI_BASE_URL = "https://api.openai.com/v1"
+AI_MODEL = "gpt-4o-mini"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+
+[[durable_objects.bindings]]
+name = "QUEUE_DO"
+class_name = "DOQueueHandler"
+
+[[durable_objects.bindings]]
+name = "SHARDED_TAG_CACHE"
+class_name = "DOShardedTagCache"
+
+[[durable_objects.bindings]]
+name = "BUCKET_CACHE_PURGE"
+class_name = "BucketCachePurge"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"]

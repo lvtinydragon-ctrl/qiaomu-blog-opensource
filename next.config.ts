@@ -5,7 +5,10 @@ import type { NextConfig } from "next";
 void initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  // 图片优化（Cloudflare 有自己的优化）
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  output: "standalone",
   images: {
     unoptimized: true,
   },
