@@ -20,6 +20,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.3",
     "@opennextjs/cloudflare": "^1.19.1",
     "@tiptap/core": "^3.22.3",
     "@tiptap/extension-image": "^3.22.3",
