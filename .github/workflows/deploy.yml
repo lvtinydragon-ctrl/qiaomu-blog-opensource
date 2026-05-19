@@ -38,7 +38,7 @@ jobs:
 
       - name: Apply D1 schema
         run: |
-          npx wrangler d1 execute DB --remote --file=db/schema.sql -c wrangler.ci.toml
+          npx wrangler d1 execute DB --remote --file=db/schema.sql -c wrangler.ci.toml || true
           if [ -f db/seed-template.sql ]; then
             npx wrangler d1 execute DB --remote --file=db/seed-template.sql -c wrangler.ci.toml || true
           fi
