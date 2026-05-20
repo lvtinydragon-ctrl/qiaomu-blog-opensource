@@ -261,6 +261,23 @@ async function fetchRemoteImage(inputUrl: string, maxBytes: number, kind: 'conte
     }
   }
 
+  const blogOrigin = input.origin
+  if (blogOrigin && !input.pathname.startsWith('/api/images/') && kind === 'cover') {
+    const coverPresets = [
+      { w: '320', h: '180', fit: 'cover', q: '28', format: 'jpeg' },
+      { w: '240', h: '135', fit: 'cover', q: '22', format: 'jpeg' },
+      { w: '200', h: '112', fit: 'cover', q: '18', format: 'jpeg' },
+      { w: '160', h: '90', fit: 'cover', q: '15', format: 'jpeg' },
+    ]
+    for (const preset of coverPresets) {
+      const cdn = new URL('/cdn-cgi/image/' + Object.entries(preset).map(([k, v]) => `${k}=${v}`).join(',') + '/' + input.pathname, blogOrigin)
+      const candidate = cdn.toString()
+      if (!candidates.includes(candidate)) {
+        candidates.push(candidate)
+      }
+    }
+  }
+
   for (const candidate of candidates) {
     try {
       let url = new URL(candidate)
