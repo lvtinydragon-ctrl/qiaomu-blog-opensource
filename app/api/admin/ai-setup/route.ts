@@ -2,16 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    // Auth: check password cookie
-    const cookie = req.headers.get('cookie') || ''
-    const match = cookie.match(/qmblog_admin=([^;]+)/)
-    if (!match) return NextResponse.json({ error: 'No session' }, { status: 401 })
+    const { getAppCloudflareEnv } = await import('@/lib/cloudflare')
+    const { authenticateRequest } = await import('@/lib/admin-auth')
 
-    // Verify session via internal fetch
-    const verifyResp = await fetch(new URL('/api/admin/session', req.url), {
-      headers: { cookie: `qmblog_admin=${match[1]}` },
-    })
-    if (!verifyResp.ok) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const env = await getAppCloudflareEnv()
+    const db = env?.DB
+    if (!db) return NextResponse.json({ error: 'DB unavailable' }, { status: 500 })
+    if (!(await authenticateRequest(req, db))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     const body = await req.json()
     const { base_url, model, api_key, name, provider } = body
@@ -19,11 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing base_url, model, or api_key' }, { status: 400 })
     }
 
-    // Import DB adapter directly
-    const { createDb } = await import('@/lib/db-adapter')
-    const db = createDb()
-
-    // Create table if not exists
+    // Create tables if not exist
     await db.prepare(`
       CREATE TABLE IF NOT EXISTS ai_provider_profiles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,16 +55,10 @@ export async function POST(req: NextRequest) {
       )
     `).run()
 
-    // Mask API key for display
-    const masked = api_key.length > 8
-      ? api_key.slice(0, 4) + '...' + api_key.slice(-4)
-      : '****'
+    const masked = api_key.length > 8 ? api_key.slice(0, 4) + '...' + api_key.slice(-4) : '****'
 
-    // Store API key as plaintext in encrypted field (no encryption secret issues)
-    // Clear existing defaults
     await db.prepare('UPDATE ai_provider_profiles SET is_default = 0').run()
 
-    // Insert profile
     const result = await db.prepare(`
       INSERT INTO ai_provider_profiles (
         name, provider, provider_name, provider_type, provider_category,
@@ -77,22 +66,14 @@ export async function POST(req: NextRequest) {
         api_key_encrypted, api_key_masked, is_default
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `).bind(
-      name || 'DeepSeek',
-      provider || 'deepseek',
-      name || 'DeepSeek',
-      'openai_compatible',
-      'china_direct',
-      base_url,
-      model,
-      0.7,
-      4096,
-      api_key,
-      masked,
+      name || 'DeepSeek', provider || 'deepseek', name || 'DeepSeek',
+      'openai_compatible', 'china_direct', base_url, model, 0.7, 4096,
+      api_key, masked,
     ).run()
 
     const profileId = result.meta.last_row_id
 
-    // Seed default actions if empty
+    // Seed default actions
     const count = await db.prepare('SELECT COUNT(*) as c FROM ai_actions').first<{ c: number }>()
     if ((count?.c ?? 0) === 0) {
       const actions = [
@@ -116,7 +97,7 @@ export async function POST(req: NextRequest) {
       actions_seeded: (count?.c ?? 0) === 0,
     })
   } catch (err) {
-    const msg = err instanceof Error ? `${err.message}\n${err.stack?.slice(0, 500)}` : String(err)
+    const msg = err instanceof Error ? `${err.message}\n${err.stack?.slice(0, 300)}` : String(err)
     return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
