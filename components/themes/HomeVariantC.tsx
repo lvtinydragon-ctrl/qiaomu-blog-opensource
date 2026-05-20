@@ -11,12 +11,12 @@ import { ThemeDropdown } from '@/components/ThemeDropdown'
 import type { HomeProps } from '@/components/HomeClient'
 import type { SiteNavLink } from '@/lib/site'
 
-const BG = '#1a1c2e'
-const FG = '#c8d3e8'
-const MUTED = '#5a6480'
-const BORDER = '#2a2f48'
-const ACCENT = '#4ade80'   // terminal green
-const ACCENT2 = '#fbbf24'  // amber
+const BG = '#0b0e18'
+const FG = '#c8d3f0'
+const MUTED = '#5a6890'
+const BORDER = '#1e2448'
+const ACCENT = '#5b8af5'   // blue
+const ACCENT2 = '#a78bfa'  // purple
 
 function formatDateCompact(ts: number) {
   const d = new Date(ts * 1000)
@@ -34,8 +34,7 @@ function TerminalHeader({
   navLinks: SiteNavLink[]
 }) {
   const defaultLinks = [
-    { label: '~/github', url: 'https://github.com/joeseesun/', openInNewTab: true },
-    { label: '~/twitter', url: 'https://x.com/vista8/', openInNewTab: true },
+    { label: '~/github', url: 'https://github.com/lvtinydragon-ctrl/', openInNewTab: true },
     { label: '~/rss', url: '/feed.xml', openInNewTab: false },
   ]
   const links = navLinks.length > 0
@@ -55,7 +54,7 @@ function TerminalHeader({
       {/* Left: terminal prompt */}
       <div className="terminal-home-prompt" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <span style={{ width: 10, height: 10, borderRadius: '50%', background: ACCENT, display: 'inline-block', boxShadow: `0 0 10px ${ACCENT}` }} />
-        <Link href="/" style={{ color: MUTED, textDecoration: 'none' }}>qiaomu@blog:~$</Link>
+        <Link href="/" style={{ color: MUTED, textDecoration: 'none' }}>bluew@blog:~$</Link>
         <span style={{ color: FG }}>./serve --port=443</span>
       </div>
 
@@ -115,7 +114,7 @@ export function HomeVariantC({
   const [cursorOn, setCursorOn] = useState(true)
   const [typed, setTyped] = useState('')
   const [hoverId, setHoverId] = useState<string | null>(null)
-  const fullText = '独立 · AI · 产品 · 思考'
+  const fullText = '蓝白之间 · 看见世界的另一面'
 
   useEffect(() => {
     const iv = setInterval(() => setCursorOn(c => !c), 530)
@@ -148,7 +147,7 @@ export function HomeVariantC({
       color: FG,
       minHeight: '100vh',
       fontFamily: '"JetBrains Mono", "SF Mono", ui-monospace, "PingFang SC", monospace',
-      backgroundImage: `radial-gradient(circle at 20% 0%, rgba(74,222,128,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 100%, rgba(251,191,36,0.05) 0%, transparent 50%)`,
+      backgroundImage: `radial-gradient(circle at 20% 0%, rgba(91,138,245,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 100%, rgba(167,139,250,0.06) 0%, transparent 50%)`,
       position: 'relative',
     }}>
       {/* Scanline overlay */}
@@ -174,13 +173,13 @@ export function HomeVariantC({
             overflow: 'hidden',
           }}>
 {`  ┌────────────────────────────────────┐
-  │  QIAOMU BLOG  ·  乔木博客          │
+  │  BLUEW REALM  ·  蓝白界          │
   │  ~/posts  —  reading the future     │
   └────────────────────────────────────┘`}
           </div>
           <div className="terminal-banner-meta" style={{ marginTop: 14, fontSize: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ color: ACCENT2 }}>&gt;</span>
-            <span style={{ color: FG }}>乔木博客</span>
+            <span style={{ color: FG }}>蓝白界</span>
             <span style={{ color: MUTED }}>{'//'}</span>
             <span style={{ color: MUTED }}>
               {typed}

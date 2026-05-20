@@ -47,3 +47,8 @@ next-env.d.ts
 skills/
 wrangler.local.toml
 worker-configuration.d.ts
+bluew-blog.db
+auth
+auth-wal
+turso.exe
+config/

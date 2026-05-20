@@ -64,8 +64,8 @@ export async function generateMetadata({
       },
       twitter: {
         card: 'summary_large_image' as const,
-        site: '@vista8',
-        creator: '@vista8',
+        site: '',
+        creator: '',
         title: post.title,
         description: post.description || undefined,
         images: [ogImage],

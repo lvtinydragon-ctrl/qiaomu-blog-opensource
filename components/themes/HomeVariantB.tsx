@@ -12,11 +12,11 @@ import { ThemeDropdown } from '@/components/ThemeDropdown'
 import type { HomeProps } from '@/components/HomeClient'
 import type { SiteNavLink } from '@/lib/site'
 
-const ACCENT = '#c44a2a' // editorial red-orange
-const BG = '#f6f3ed'
-const FG = '#1a1614'
-const MUTED = '#7a6f68'
-const BORDER = '#d8d2c8'
+const ACCENT = '#2d5af0' // blue accent
+const BG = '#f5f7fc'
+const FG = '#1a1e2e'
+const MUTED = '#5f6888'
+const BORDER = '#d8ddf0'
 
 function formatDate(ts: number) {
   return new Date(ts * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -38,8 +38,7 @@ function EditorialNavBar({
   navLinks: SiteNavLink[]
 }) {
   const defaultLinks = [
-    { label: 'GitHub', url: 'https://github.com/joeseesun/', openInNewTab: true },
-    { label: 'Twitter', url: 'https://x.com/vista8/', openInNewTab: true },
+    { label: 'GitHub', url: 'https://github.com/lvtinydragon-ctrl/', openInNewTab: true },
     { label: 'RSS', url: '/feed.xml', openInNewTab: false },
   ]
   const links = navLinks.length > 0 ? navLinks : defaultLinks
@@ -126,7 +125,7 @@ export function HomeVariantB({
             fontFamily: '"Noto Serif SC", "Source Han Serif SC", Georgia, serif',
             color: FG,
           }}>
-            乔木<span style={{ color: ACCENT }}>·</span>博客
+            蓝白<span style={{ color: ACCENT }}>·</span>界
           </h1>
         </Link>
         <div className="editorial-masthead-meta" style={{
@@ -138,7 +137,7 @@ export function HomeVariantB({
           fontFamily: '"JetBrains Mono", ui-monospace, monospace',
           letterSpacing: '0.05em',
         }}>
-          <span>AI · PRODUCT · INDEPENDENT THINKING</span>
+          <span>TECH · THINKING · INDEPENDENT VOICE</span>
           <span>{posts.length} ARTICLES</span>
         </div>
       </div>
@@ -228,7 +227,7 @@ export function HomeVariantB({
                   lineHeight: 0.9,
                   textAlign: 'center',
                 }}>
-                  AI<br />·
+                  BW<br />·
                 </div>
               </div>
             </div>
@@ -361,8 +360,8 @@ export function HomeVariantB({
         fontFamily: '"JetBrains Mono", ui-monospace, monospace',
         letterSpacing: '0.1em',
       }}>
-        <span>© {new Date().getFullYear()} 乔木博客</span>
-        <span>独立 · 不商业化 · RSS 友好</span>
+        <span>© {new Date().getFullYear()} 蓝白界</span>
+        <span>蓝白之间，看见世界的另一面</span>
       </div>
 
       {/* Standard footer with admin entry */}
