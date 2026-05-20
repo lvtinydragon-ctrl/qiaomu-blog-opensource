@@ -11,6 +11,7 @@ const REQUEST_TIMEOUT = 20_000
 const REMOTE_IMAGE_LIMIT = 1024 * 1024
 const COVER_IMAGE_LIMIT = 64 * 1024
 const FALLBACK_SOURCE_LIMIT = 20 * 1024 * 1024
+const WX_API_BASE = 'https://wx-api.bluewhiterealm.us.ci'
 
 interface StoredWechatDirectConfig {
   accounts?: Array<{
@@ -151,7 +152,7 @@ async function getAccessToken(appid: string, secret: string): Promise<string> {
     return cached.token
   }
 
-  const url = new URL('https://api.weixin.qq.com/cgi-bin/token')
+  const url = new URL('/cgi-bin/token', WX_API_BASE)
   url.searchParams.set('grant_type', 'client_credential')
   url.searchParams.set('appid', appid)
   url.searchParams.set('secret', secret)
@@ -173,7 +174,7 @@ async function getAccessToken(appid: string, secret: string): Promise<string> {
 }
 
 async function wxApiJson(accessToken: string, path: string, body?: unknown) {
-  const url = new URL(`https://api.weixin.qq.com${path}`)
+  const url = new URL(path, WX_API_BASE)
   url.searchParams.set('access_token', accessToken)
 
   const response = await fetch(url, {
@@ -191,7 +192,7 @@ async function wxApiJson(accessToken: string, path: string, body?: unknown) {
 }
 
 async function wxUploadForm(accessToken: string, path: string, searchParams: Record<string, string>, formData: FormData) {
-  const url = new URL(`https://api.weixin.qq.com${path}`)
+  const url = new URL(path, WX_API_BASE)
   url.searchParams.set('access_token', accessToken)
   for (const [key, value] of Object.entries(searchParams || {})) {
     url.searchParams.set(key, value)
