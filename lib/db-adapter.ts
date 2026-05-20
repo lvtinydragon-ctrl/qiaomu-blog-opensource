@@ -49,8 +49,8 @@ let dbInstance: D1Adapter | null = null
 export function createDb(url?: string, authToken?: string): D1Adapter {
   if (dbInstance) return dbInstance
 
-  const dbUrl = url || process.env.TURSO_URL || 'file:bluew-blog.db'
-  const token = authToken || process.env.TURSO_AUTH_TOKEN
+  const dbUrl = (url || process.env.TURSO_URL || 'file:bluew-blog.db').replace(/\s/g, '')
+  const token = (authToken || process.env.TURSO_AUTH_TOKEN || '').replace(/\s/g, '')
 
   const client = createClient(token ? { url: dbUrl, authToken: token } : { url: dbUrl })
 
