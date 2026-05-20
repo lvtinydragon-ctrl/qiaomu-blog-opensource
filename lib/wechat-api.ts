@@ -261,23 +261,6 @@ async function fetchRemoteImage(inputUrl: string, maxBytes: number, kind: 'conte
     }
   }
 
-  const blogOrigin = input.origin
-  if (blogOrigin && !input.pathname.startsWith('/api/images/') && kind === 'cover') {
-    const coverPresets = [
-      { w: '320', h: '180', fit: 'cover', q: '28', format: 'jpeg' },
-      { w: '240', h: '135', fit: 'cover', q: '22', format: 'jpeg' },
-      { w: '200', h: '112', fit: 'cover', q: '18', format: 'jpeg' },
-      { w: '160', h: '90', fit: 'cover', q: '15', format: 'jpeg' },
-    ]
-    for (const preset of coverPresets) {
-      const cdn = new URL('/cdn-cgi/image/' + Object.entries(preset).map(([k, v]) => `${k}=${v}`).join(',') + '/' + input.pathname, blogOrigin)
-      const candidate = cdn.toString()
-      if (!candidates.includes(candidate)) {
-        candidates.push(candidate)
-      }
-    }
-  }
-
   for (const candidate of candidates) {
     try {
       let url = new URL(candidate)
@@ -344,9 +327,32 @@ async function uploadContentImage(accessToken: string, sourceUrl: string): Promi
   return resultUrl
 }
 
+async function compressToJpegUnderLimit(buffer: Uint8Array, maxBytes: number): Promise<Uint8Array> {
+  const sharp = await import('sharp').then(m => m.default || m)
+  for (const scale of [1, 0.75, 0.5, 0.35, 0.25]) {
+    for (const quality of [60, 45, 30, 20]) {
+      const resized = await sharp(Buffer.from(buffer))
+        .resize({ width: Math.round(560 * scale) })
+        .jpeg({ quality })
+        .toBuffer()
+      if (resized.byteLength <= maxBytes) {
+        return new Uint8Array(resized)
+      }
+    }
+  }
+  throw new Error(`图片在自动压缩后仍超过微信 ${Math.round(maxBytes / 1024)}KB 限制`)
+}
+
 async function uploadCoverThumb(accessToken: string, sourceUrl: string): Promise<string> {
-  const downloaded = await fetchRemoteImage(sourceUrl, COVER_IMAGE_LIMIT, 'cover')
-  const blob = new Blob([downloaded.buffer], { type: 'image/jpeg' })
+  let imageBuffer: Uint8Array
+  try {
+    const downloaded = await fetchRemoteImage(sourceUrl, COVER_IMAGE_LIMIT, 'cover')
+    imageBuffer = downloaded.buffer
+  } catch {
+    const raw = await fetchRemoteImage(sourceUrl, FALLBACK_SOURCE_LIMIT, 'cover')
+    imageBuffer = await compressToJpegUnderLimit(raw.buffer, COVER_IMAGE_LIMIT)
+  }
+  const blob = new Blob([imageBuffer], { type: 'image/jpeg' })
 
   const formData = new FormData()
   formData.append('media', blob, 'cover.jpg')
