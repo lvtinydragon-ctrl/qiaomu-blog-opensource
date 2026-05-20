@@ -52,3 +52,5 @@ auth
 auth-wal
 turso.exe
 config/
+.open-next/
+.wrangler/
