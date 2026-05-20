@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { ensureAuthenticatedRequest, getRouteEnvWithDb, jsonError, jsonOk, parseJsonBody } from '@/lib/server/route-helpers'
 import { assertWechatBridgeReady, fetchWechatBridgeJson, getWechatBridgeConfig } from '@/lib/wechat-bridge-config'
+import { getWechatDirectConfig, publishToWechat } from '@/lib/wechat-api'
 import { resolvePostCoverImage } from '@/lib/default-cover-images'
 import { getSiteUrl } from '@/lib/site-config'
 import { WECHAT_DEFAULT_AUTHOR, WECHAT_DEFAULT_NEED_OPEN_COMMENT } from '@/lib/wechat-publish-defaults'
@@ -47,6 +48,26 @@ export async function POST(req: NextRequest) {
     if (!title) return jsonError('文章标题不能为空', 400)
     if (!contentHtml) return jsonError('文章内容不能为空', 400)
 
+    // Try direct WeChat API first (no bridge needed)
+    const directConfig = await getWechatDirectConfig(route.db, route.env)
+    const directAccount = directConfig.accounts.find(a => a.id === accountId)
+
+    if (directAccount) {
+      const result = await publishToWechat(directAccount, {
+        title,
+        content_html: contentHtml,
+        author,
+        digest: (body.digest || '').trim(),
+        content_source_url: (body.content_source_url || '').trim(),
+        cover_image_url: coverImageUrl,
+        publish_now: Boolean(body.publish_now),
+        need_open_comment: needOpenComment,
+        only_fans_can_comment: onlyFansCanComment,
+      })
+      return jsonOk(result)
+    }
+
+    // Fallback to bridge mode
     const config = assertWechatBridgeReady(await getWechatBridgeConfig(route.db, route.env))
     const result = await fetchWechatBridgeJson<Record<string, unknown>>(config, '/v1/wechat/publish', {
       method: 'POST',
